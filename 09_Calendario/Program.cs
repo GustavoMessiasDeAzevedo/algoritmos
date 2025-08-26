@@ -89,6 +89,10 @@ namespace _09_Calendario
             Console.WriteLine("A Terça-feira de Carnaval ocorre 47 dias antes da Páscoa");
             Console.WriteLine("A Sexta-feira Santa ocorre 2 dias antes da Páscoa");
             Console.WriteLine("Corpus Christi ocorre 60 dias após a Páscoa");
+
+
+            Console.WriteLine(DomingoDePascoa(ano));
+            Console.WriteLine($"Páscoa em {ano}: {pascoa:dd/MM/yyyy}");
         }
 
         public static int[] RetornaFeriados(int mes, int ano)
