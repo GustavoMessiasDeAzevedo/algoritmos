@@ -89,10 +89,6 @@ namespace _09_Calendario
             Console.WriteLine("A Terça-feira de Carnaval ocorre 47 dias antes da Páscoa");
             Console.WriteLine("A Sexta-feira Santa ocorre 2 dias antes da Páscoa");
             Console.WriteLine("Corpus Christi ocorre 60 dias após a Páscoa");
-
-
-            Console.WriteLine(DomingoDePascoa(ano));
-            Console.WriteLine($"Páscoa em {ano}: {pascoa:dd/MM/yyyy}");
         }
 
         public static int[] RetornaFeriados(int mes, int ano)
@@ -172,12 +168,12 @@ namespace _09_Calendario
             int h = (19 * a + b - d - g + 15) % 30;
             int i = c / 4;
             int k = c % 4;
-            int l = (32 + 2 * e + 2 * i - k) % 7;
+            int l = (32 + 2 * e + 2 * i - h - k) % 7;
             int m = (a + 11 * h + 22 * l) / 451;
-            int mesPascoa = (h + l - 7 * m + 114) / 31;
-            int diaPascoa = ((h + l - 7 * m + 114) % 31) + 1;
+            int mes = (h + l - 7 * m + 114) / 31;
+            int dia = ((h + l - 7 * m + 114) % 31) + 1;
 
-            return new DateTime(ano, mesPascoa, diaPascoa);
+            return new DateTime(ano, mes, dia);
         }
     }
 }
