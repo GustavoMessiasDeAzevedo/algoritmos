@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,83 +13,12 @@ namespace _09_Calendario
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Digite o mês (1..12)");
-            int mes = int.Parse(Console.ReadLine());
 
             Console.WriteLine("Digite o ano");
             int ano = int.Parse(Console.ReadLine());
 
-            int diasDoMes = DateTime.DaysInMonth(ano, mes);
-            DateTime primeiroDiaMes = new DateTime(ano, mes, 1);
-            int diaSemanaInicio = (int)primeiroDiaMes.DayOfWeek;
 
-            int[,] calendario = new int[6, 7];
-
-            int dia = 1;
-
-            for (int semana = 0; semana < 6; semana++)
-            {
-                for (int diaDaSemana = 0; diaDaSemana < 7; diaDaSemana++)
-                {
-                    if (semana == 0 && diaDaSemana < diaSemanaInicio)
-                    {
-                        calendario[semana, diaDaSemana] = 0;
-                    }
-                    else if (dia <= diasDoMes)
-                    {
-                        calendario[semana, diaDaSemana] = dia++;
-                    }
-                }
-            }
-
-            Console.WriteLine($"\nCalendário de {primeiroDiaMes.ToString("MMMM")} de {ano}");
-            Console.WriteLine("DOM\tSEG\tTER\tQUA\tQUI\tSEX\tSAB");
-
-            int[] diasFeriados = RetornaFeriados(mes, ano);
-
-            for (int semana = 0; semana < 6; semana++)
-            {
-                for (int diaDaSemana = 0; diaDaSemana < 7; diaDaSemana++)
-                {
-                    if (calendario[semana, diaDaSemana] != 0)
-                    {
-                        if (diasFeriados.Contains(calendario[semana, diaDaSemana]) || diaDaSemana == 0)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.Write(calendario[semana, diaDaSemana].ToString("D2") + "\t");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.Write(calendario[semana, diaDaSemana].ToString("D2") + "\t");
-                        }
-                    }
-                    else
-                    {
-                        Console.Write("\t");
-                    }
-                }
-                Console.WriteLine();
-            }
-
-            if (mes != 0)
-            {
-                Console.Write("Feriados fixos do mês: ");
-                for (int i = 0; i < diasFeriados.Length; i++)
-                {
-                    if (diasFeriados[i] > 0)
-                    {
-                        Console.Write($"{diasFeriados[i].ToString("D2")}\t");
-                    }
-                }
-                Console.WriteLine();
-            }
-
-            DateTime pascoa = DomingoDePascoa(ano);
-            Console.WriteLine($"\nO Domingo de Páscoa em {pascoa.Day}/{pascoa.Month}/{ano}");
-            Console.WriteLine("A Terça-feira de Carnaval ocorre 47 dias antes da Páscoa");
-            Console.WriteLine("A Sexta-feira Santa ocorre 2 dias antes da Páscoa");
-            Console.WriteLine("Corpus Christi ocorre 60 dias após a Páscoa");
+            ImprimirCalendario(ano);
         }
 
         public static int[] RetornaFeriados(int mes, int ano)
@@ -103,24 +33,24 @@ namespace _09_Calendario
             DateTime sextaFeiraSanta = pascoa.AddDays(-2);
             DateTime corpusChristi = pascoa.AddDays(60);
 
-            if(carnaval.Month == mes)
+            if (carnaval.Month == mes)
             {
-                feriados[indice++] = carnaval.Day;  
+                feriados[indice++] = carnaval.Day;
             }
-            if(sextaFeiraSanta.Month == mes)
+            if (sextaFeiraSanta.Month == mes)
             {
                 feriados[indice++] = sextaFeiraSanta.Day;
             }
-            if(corpusChristi.Month == mes)
+            if (corpusChristi.Month == mes)
             {
-                feriados[indice++] = corpusChristi.Day;  
+                feriados[indice++] = corpusChristi.Day;
             }
-            if(pascoa.Month == mes)
+            if (pascoa.Month == mes)
             {
-                feriados[indice++] = pascoa.Day;  
+                feriados[indice++] = pascoa.Day;
             }
 
-
+            Array.Sort(feriados);
             if (mes == 1)
             {
                 feriados[indice++] = 1;
@@ -174,6 +104,82 @@ namespace _09_Calendario
             int dia = ((h + l - 7 * m + 114) % 31) + 1;
 
             return new DateTime(ano, mes, dia);
+        }
+
+     
+        public static void ImprimirCalendario(int ano)
+        {
+            for (int mes = 1; mes <= 12; mes++)
+            {
+                DateTime primeiroDiaMes = new DateTime(ano, mes, 1);
+                int diasDoMes = DateTime.DaysInMonth(ano, mes);
+                int diaSemanaInicio = (int)primeiroDiaMes.DayOfWeek;
+
+                int[,] calendario = new int[6, 7];
+
+                int dia = 1;
+
+                for (int semana = 0; semana < 6; semana++)
+                {
+                    for (int diaDaSemana = 0; diaDaSemana < 7; diaDaSemana++)
+                    {
+                        if (semana == 0 && diaDaSemana < diaSemanaInicio)
+                        {
+                            calendario[semana, diaDaSemana] = 0;
+                        }
+                        else if (dia <= diasDoMes)
+                        {
+                            calendario[semana, diaDaSemana] = dia++;
+                        }
+                    }
+                }
+                Console.WriteLine($"\nCalendário de {primeiroDiaMes.ToString("MMMM")} de {ano}");
+                Console.WriteLine("DOM\tSEG\tTER\tQUA\tQUI\tSEX\tSAB");
+
+                int[] diasFeriados = RetornaFeriados(mes, ano);
+
+                for (int semana = 0; semana < 6; semana++)
+                {
+                    for (int diaDaSemana = 0; diaDaSemana < 7; diaDaSemana++)
+                    {
+                        if (calendario[semana, diaDaSemana] != 0)
+                        {
+                            if (diasFeriados.Contains(calendario[semana, diaDaSemana]) || diaDaSemana == 0)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write(calendario[semana, diaDaSemana].ToString("D2") + "\t");
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.Write(calendario[semana, diaDaSemana].ToString("D2") + "\t");
+                            }
+                        }
+                        else
+                        {
+                            Console.Write("\t");
+                        }
+                    }
+                    Console.WriteLine();
+                }
+                if (mes != 0)
+                {
+                    Console.Write("Feriados fixos do mês: ");
+                    for (int i = 0; i < diasFeriados.Length; i++)
+                    {
+                        if (diasFeriados[i] > 0)
+                        {
+                            Console.Write($"{diasFeriados[i].ToString("D2")}\t");
+                        }
+                    }
+                    Console.WriteLine();
+                }
+            }
+            DateTime pascoa = DomingoDePascoa(ano);
+            Console.WriteLine($"\nO Domingo de Páscoa em {pascoa.Day}/{pascoa.Month}/{ano}");
+            Console.WriteLine("A Terça-feira de Carnaval ocorre 47 dias antes da Páscoa");
+            Console.WriteLine("A Sexta-feira Santa ocorre 2 dias antes da Páscoa");
+            Console.WriteLine("Corpus Christi ocorre 60 dias após a Páscoa");
         }
     }
 }
